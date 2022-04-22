@@ -2,6 +2,7 @@ package org.icij.datashare.text.nlp;
 
 import org.icij.datashare.DynamicClassLoader;
 import org.icij.datashare.io.RemoteFiles;
+import org.icij.datashare.io.RemoteFilesHttp;
 import org.icij.datashare.text.Language;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,7 +101,11 @@ public abstract class AbstractModels<T> {
         } catch (InterruptedException | IOException e) {
             LOGGER.error("failed downloading models for " + language, e);
         } finally {
-            remoteFiles.shutdown();
+            try {
+                remoteFiles.shutdown();
+            } catch (IOException e) {
+                LOGGER.error("error while trying to close remote files", e);
+            }
         }
     }
 
@@ -122,5 +127,5 @@ public abstract class AbstractModels<T> {
     }
 
     public boolean isLoaded(Language language) { return models.containsKey(language);}
-    protected RemoteFiles getRemoteFiles() { return RemoteFiles.getAuthenticated();}
+    protected RemoteFiles getRemoteFiles() { return RemoteFilesHttp.getDefault();}
 }

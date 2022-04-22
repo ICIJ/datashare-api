@@ -9,7 +9,7 @@ import java.io.File;
 
 import static org.fest.assertions.Assertions.assertThat;
 
-public class RemoteFilesTest {
+public class RemoteFilesS3Test {
     private static final String BUCKET_NAME = "mybucket";
     @ClassRule
     public static S3MockRule S3_MOCK_RULE = new S3MockRule();
@@ -17,7 +17,7 @@ public class RemoteFilesTest {
     public TemporaryFolder folder = new TemporaryFolder();
 
     private final AmazonS3 s3Client = S3_MOCK_RULE.createS3Client();
-    private RemoteFiles remoteFiles = new RemoteFiles(s3Client, BUCKET_NAME);
+    private RemoteFilesS3 remoteFiles = new RemoteFilesS3(s3Client, BUCKET_NAME);
 
     @Before
     public void setUp() {

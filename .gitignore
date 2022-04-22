@@ -3,3 +3,5 @@ target
 *.iml
 *.versionsBackup
 .idea
+dist
+logs
