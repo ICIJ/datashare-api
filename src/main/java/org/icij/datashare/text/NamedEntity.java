@@ -157,21 +157,12 @@ public final class NamedEntity implements Entity {
             throw new IllegalArgumentException("Mention is undefined");
         }
         this.mentionNorm = normalize(mention);
-        ArrayList<String> hashed = Stream.of(
-            documentId,
-            String.valueOf(offsets),
-            extractor.toString(),
-            mentionNorm
-        ).collect(Collectors.toCollection(ArrayList::new));
-        this.metadata = metadata;
-        if (this.metadata != null) {
-            hashed.addAll(this.metadata.entrySet()
-                .stream()
-                .sorted(Map.Entry.comparingByKey())
-                .flatMap(e -> Stream.of(e.getKey(), String.valueOf(e.getValue().hashCode())))
-                .collect(Collectors.toList()));
-        }
-        this.id = HASHER.hash(String.join("|", hashed));
+        this.id = HASHER.hash( String.join("|",
+                documentId,
+                String.valueOf(offsets),
+                extractor.toString(),
+                mentionNorm
+        ));
         this.category = Optional.ofNullable(category).orElse(UNKNOWN);
         this.mention = mention;
         this.documentId = documentId;
@@ -181,7 +172,7 @@ public final class NamedEntity implements Entity {
         this.extractorLanguage = extractorLanguage;
         this.hidden = hidden;
         this.partsOfSpeech = partsOfSpeech;
-
+        this.metadata = metadata;
     }
 
     @Override
