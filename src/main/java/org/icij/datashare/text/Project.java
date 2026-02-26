@@ -4,13 +4,13 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.icij.datashare.Entity;
+import org.icij.datashare.net.CidrMatcher;
 
 import java.net.InetSocketAddress;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Date;
 import java.util.Objects;
-import java.util.regex.Pattern;
 
 import static com.fasterxml.jackson.annotation.JsonCreator.Mode.DELEGATING;
 import static com.fasterxml.jackson.annotation.JsonCreator.Mode.PROPERTIES;
@@ -22,7 +22,7 @@ public class Project extends ProjectProxy {
     @JsonIgnore
     public final String allowFromMask;
     @JsonIgnore
-    private final Pattern pattern;
+    private final CidrMatcher cidrMatcher;
     public final String label;
     public final String description;
     public final String publisherName;
@@ -104,9 +104,7 @@ public class Project extends ProjectProxy {
         this.allowFromMask = allowFromMask;
         this.creationDate = creationDate;
         this.updateDate = updateDate;
-        this.pattern = Pattern.compile(allowFromMask.
-                replace(".", "\\.").
-                replace("*", "\\d{1,3}"));
+        this.cidrMatcher = new CidrMatcher(allowFromMask);
     }
 
     public Project(String name, String allowFromMask) {
@@ -114,7 +112,7 @@ public class Project extends ProjectProxy {
     }
 
     public boolean isAllowed(final InetSocketAddress socketAddress) {
-        return pattern.matcher(socketAddress.getAddress().getHostAddress()).matches();
+        return cidrMatcher.matches(socketAddress.getAddress());
     }
 
     public static boolean isAllowed(Project project, InetSocketAddress socketAddress) {
